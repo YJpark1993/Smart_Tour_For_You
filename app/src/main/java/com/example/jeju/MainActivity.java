@@ -38,7 +38,8 @@ public class MainActivity extends MOMLActivity {
         if (getActionBar() != null) {
             getActionBar().setDisplayHomeAsUpEnabled(true);
         }
-
+        Intent intent = new Intent(MainActivity.this, SuccessActivity.class);
+        startActivity(intent);
         callback = new SessionCallback();
         Session.getCurrentSession().addCallback(callback);
     }
@@ -90,8 +91,8 @@ public class MainActivity extends MOMLActivity {
                     //로그인에 성공하면 로그인한 사용자의 일련번호, 닉네임, 이미지url등을 리턴합니다.
                     //사용자 ID는 보안상의 문제로 제공하지 않고 일련번호는 제공합니다.
                     Log.e("UserProfile", userProfile.toString());
-                    Intent intent = new Intent(MainActivity.this, SuccessActivity.class);
-                    startActivity(intent);
+//                    Intent intent = new Intent(MainActivity.this, SuccessActivity.class);
+//                    startActivity(intent);
                     finish();
                 }
             });
