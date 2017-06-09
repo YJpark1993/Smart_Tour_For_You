@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	Created by http://cafe.naver.com/citrineframework
+	You can freely copy, distribute, modify for commercial or non-commercial purposes.
+-->
+<MOML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.applusform.com/xsd/moml_ui.xsd" version="1.1.1">
+
+	<FUNCTION id="aniFirst">
+		<CMD condition="userVariable.aniValue == 'false'" cmd="animation.show('logo', 'fade', '', 1000, '')" delay="100" />
+		<CMD condition="userVariable.aniValue == 'false'" cmd="animation.show('facebookBtn', 'fade', '', 1000, '')" delay="100" />
+		<CMD condition="userVariable.aniValue == 'false'" cmd="animation.show('googleBtn', 'fade', '', 1000, '')" delay="100" />
+		<CMD condition="userVariable.aniValue == 'false'" cmd="animation.show('mailBtn', 'fade', '', 1000, '')" delay="100" />
+		<CMD condition="userVariable.aniValue == 'false'" cmd="animation.show('footLabel', 'fade', '', 1000, '')" delay="100" />
+		<CMD cmd="textLabel.text = 'She used Pinterest'+'\n'+'to roll her first pasta'" />
+		<CMD cmd="animation.show('textLabel', 'fade', '', 1500, '')" delay="100" />
+		<CMD cmd="animation.flyIn('bg1', -294, 0, bg1.width, bg1.height, 'reverse', 8000, 'function.aniSecond')" />
+	</FUNCTION>
+
+	<FUNCTION id="aniSecond">
+		<CMD cmd="animation.hide('bg1', 'fade', '', 1500, '')" />
+		<CMD cmd="animation.hide('textLabel', 'fade', '', 700, '')" />
+		<CMD cmd="textLabel.text = 'He used Pinterest to'+'\n'+'start his first garden'" delay="700" />
+		<CMD cmd="animation.show('textLabel', 'fade', '', 700, '')" delay="800" />
+		<CMD cmd="animation.flyIn('bg2', -294, 0, bg1.width, bg1.height, 'reverse', 8000, 'function.aniThird')" delay="200" />
+	</FUNCTION>
+
+	<FUNCTION id="aniThird">
+		<CMD cmd="animation.hide('bg2', 'fade', '', 1500, '')" />
+		<CMD cmd="animation.hide('textLabel', 'fade', '', 700, '')" />
+		<CMD cmd="textLabel.text = 'He used Pinterest to'+'\n'+'build his collection'" delay="700" />
+		<CMD cmd="animation.show('textLabel', 'fade', '', 700, '')" delay="800" />
+		<CMD cmd="animation.flyIn('bg3', -294, 0, bg1.width, bg1.height, 'reverse', 8000, 'function.aniFourth')" delay="200" />
+	</FUNCTION>
+
+	<FUNCTION id="aniFourth">
+		<CMD cmd="userVariable.aniValue = 'true'" />
+		<CMD cmd="animation.hide('bg3', 'fade', '', 1500, '')" />
+		<CMD cmd="animation.hide('textLabel', 'fade', '', 700, '')" />
+		<CMD cmd="textLabel.text = 'Discover ideas for all'+'\n'+'your projects and'+'\n'+'interests'" delay="700" />
+		<CMD cmd="animation.show('textLabel', 'fade', '', 700, '')" delay="800" />
+		<CMD cmd="animation.flyIn('bg4', 0, -570, bg4.width, bg4.height, 'reverse', 8000, 'function.aniFirst')" delay="200" />
+	</FUNCTION>
+
+	<CMD cmd="function.aniFirst" delay="1000" />
+	<CMD cmd="userVariable.aniValue = 'false'" />
+	<UILAYOUT portrait="720,1230" landscape="720,1230">
+		<WINDOW layout="0,0,720,1230" align="relative">
+			<IMAGE id="bg4" layout="0,0,720,1800" defaultImg="res/main_background_4.jpg" />
+			<IMAGE id="bg3" layout="0,0,1230,1230" defaultImg="res/main_background_3.jpg" />
+			<IMAGE id="bg2" layout="0,0,1230,1230" defaultImg="res/main_background_2.jpg" />
+			<IMAGE id="bg1" layout="0,0,1230,1230" defaultImg="res/main_background_1.jpg" />
+			<IMAGE id="logo" layout="214,143,280,70" defaultImg="res/ic_logo_white_large.png" visible="invisible" />
+			<LABEL id="textLabel" layout="0,440,720,250" text="{'She used Pinterest'+'\n'+'to roll her first pasta'}" fontSize="60" minFontSize="-1" textAlign="center" textColor="#ffffff" visible="invisible" />
+
+			<STYLEBUTTON id="googleBtn" layout="111,892,497,80" shape="roundRect(10)" defaultImg="#f6ff00" text="Continue with Google" fontSize="30" textAlign="center" textColor="#ffffff"
+				fontStyle="bold" onClick="" visible="invisible" />
+
+			<LABEL id="footLabel" layout="0,1133,720,50" text="Have an account? Log In" fontSize="30" minFontSize="-1" textAlign="center" textColor="#ffffff" visible="invisible" />
+		</WINDOW>
+	</UILAYOUT>
+</MOML> 

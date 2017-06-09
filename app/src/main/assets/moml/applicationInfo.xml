@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	Created by LOGEO Component Team on 2012/04.
+	You can freely copy, distribute, modify for commercial or non-commercial purposes.
+-->
+<MOML>
+	<APPLICATIONINFO>
+		<UPDATEINFO realTimeType="qMark" />
+		<START url="login.xml" />
+		<ORIENTATION type="portrait" effect="none" />
+	</APPLICATIONINFO>
+</MOML>
+ 
+ 
