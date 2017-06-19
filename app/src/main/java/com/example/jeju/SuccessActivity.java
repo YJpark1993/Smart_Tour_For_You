@@ -1,6 +1,8 @@
 package com.example.jeju;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
@@ -8,6 +10,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
@@ -15,6 +18,7 @@ import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.TabHost;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.kakao.usermgmt.UserManagement;
 import com.kakao.usermgmt.callback.LogoutResponseCallback;
@@ -44,9 +48,8 @@ public class SuccessActivity extends MOMLFragmentActivity {
     private LocationListener locationListener; // 위치 정보가 업데이트시 동작
     private Location location;
     private WebView webView;
-
+    private TextView latTV, longTV;
     private Button logOut;
-
     private String globalurl;
     private Bitmap bm;
     private TextView profile_name;
@@ -104,8 +107,9 @@ public class SuccessActivity extends MOMLFragmentActivity {
         spec.setIndicator("a");
         //spec.setIndicator("", ResourcesCompat.getDrawable(getResources(), R.drawable.search, null));
         host.addTab(spec);
-
-    /*    webView = (WebView) findViewById(R.id.webview);
+        latTV = (TextView)findViewById(R.id.lat);
+        longTV = (TextView)findViewById(R.id.log);
+        webView = (WebView) findViewById(R.id.webview);
         //webview.setWebViewClinet(new WebViewClient());
         webView.getSettings().setJavaScriptEnabled(true);
 
@@ -120,12 +124,13 @@ public class SuccessActivity extends MOMLFragmentActivity {
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 String urlString = webView.getUrl().toString();
+                new PostHTTPServer().execute();
+                latTV.setText("My GPS latitude : " + latitude);
+                longTV.setText("My GPS longitude : " + longitude);
             }
         });
 
-        webView.loadUrl("http://ec2-54-167-71-119.compute-1.amazonaws.com");
-*/
-       /* locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(getApplicationContext(), "네트워크 설정을 해주세요", Toast.LENGTH_SHORT).show();
@@ -161,8 +166,7 @@ public class SuccessActivity extends MOMLFragmentActivity {
         }
 
         locManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, locationListener);
-        new PostHTTPServer().execute();
-        onStop();*/
+        webView.loadUrl("http://ec2-54-167-71-119.compute-1.amazonaws.com/map.php");
     }
 
     private class PostHTTPServer extends AsyncTask<Void, Void, String> {
@@ -187,25 +191,7 @@ public class SuccessActivity extends MOMLFragmentActivity {
         // 모두 작업을 마치고 실행할 일 (메소드 등등)
         protected void onPostExecute(String result) {
             try {
-                webView = (WebView) findViewById(R.id.webview);
-                //webview.setWebViewClinet(new WebViewClient());
-                webView.getSettings().setJavaScriptEnabled(true);
 
-                webView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
-                webView.setWebViewClient(new WebViewClient() {
-                    @Override
-                    public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                        view.loadUrl(url);
-                        return true;
-                    }
-
-                    @Override
-                    public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                        String urlString = webView.getUrl().toString();
-                    }
-                });
-
-                webView.loadUrl(strUrl);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -237,7 +223,6 @@ public class SuccessActivity extends MOMLFragmentActivity {
                 writer.close();
                 outStream.close();
                 strCookie = conn.getHeaderField("Set-Cookie"); //쿠키데이터 보관
-                Log.d("xxx", "strCookie :" + strCookie);
                 InputStream is = conn.getInputStream(); //input스트림 개방
 
                 StringBuilder builder = new StringBuilder(); //문자열을 담기 위한 객체
