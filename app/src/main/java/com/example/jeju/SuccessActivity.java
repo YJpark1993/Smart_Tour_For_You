@@ -1,23 +1,28 @@
 package com.example.jeju;
 
-import android.content.Context;
-import android.content.pm.PackageManager;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 import android.widget.TabHost;
-import android.widget.Toast;
+import android.widget.TextView;
+
+import com.kakao.usermgmt.UserManagement;
+import com.kakao.usermgmt.callback.LogoutResponseCallback;
+import com.kakao.usermgmt.response.model.UserProfile;
 
 import org.mospi.moml.framework.pub.core.MOMLFragmentActivity;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -29,6 +34,9 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.net.URLConnection;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class SuccessActivity extends MOMLFragmentActivity {
     private double latitude = 35.1234, longitude = 12.2345;
@@ -37,6 +45,13 @@ public class SuccessActivity extends MOMLFragmentActivity {
     private Location location;
     private WebView webView;
 
+    private Button logOut;
+
+    private String globalurl;
+    private Bitmap bm;
+    private TextView profile_name;
+    private CircleImageView profile_image;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +59,16 @@ public class SuccessActivity extends MOMLFragmentActivity {
         //loadApplication("/moml/applicationInfo_2.xml");
         //MOMLView momlView2 = (MOMLView) findViewById(R.id.momlView2);
         //setMomlView(momlView2);
+
+        setProfile();
+
+        logOut = (Button) findViewById(R.id.logout);
+        logOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickLogout();
+            }
+        });
 
         final TabHost host = (TabHost) findViewById(R.id.tabHost);
         host.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
@@ -100,7 +125,7 @@ public class SuccessActivity extends MOMLFragmentActivity {
 
         webView.loadUrl("http://ec2-54-167-71-119.compute-1.amazonaws.com");
 */
-        locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+       /* locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(getApplicationContext(), "네트워크 설정을 해주세요", Toast.LENGTH_SHORT).show();
@@ -137,7 +162,7 @@ public class SuccessActivity extends MOMLFragmentActivity {
 
         locManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, locationListener);
         new PostHTTPServer().execute();
-        onStop();
+        onStop();*/
     }
 
     private class PostHTTPServer extends AsyncTask<Void, Void, String> {
@@ -232,5 +257,55 @@ public class SuccessActivity extends MOMLFragmentActivity {
             return result;
         }
 
+    }
+
+    private void onClickLogout() {
+        UserManagement.requestLogout(new LogoutResponseCallback() {
+            @Override
+            public void onCompleteLogout() {
+                redirectLoginActivity();
+            }
+        });
+    }
+    protected void redirectLoginActivity() {       //세션 연결 성공 시 SignupActivity로 넘김
+        final Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        startActivity(intent);
+        finish();
+    }
+
+    private void setProfile() {
+        //////////////프로필
+        UserProfile userProfile = UserProfile.loadFromCache();
+        globalurl = userProfile.getThumbnailImagePath();
+        profile_image = (CircleImageView)findViewById(R.id.profile_image);
+        profile_name = (TextView)findViewById(R.id.profile_name);
+        profile_name.setText(userProfile.getNickname());
+        Thread mTread = new Thread(){
+            @Override
+            public void run() {
+                try {
+
+                    URL url = new URL(globalurl);
+                    URLConnection conn = url.openConnection();
+                    conn.connect();
+                    BufferedInputStream bis = new BufferedInputStream(conn.getInputStream());
+
+                    bm = BitmapFactory.decodeStream(bis);
+                    bis.close();
+
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        mTread.start();
+        try{
+            mTread.join();
+            profile_image.setImageBitmap(bm);
+        }catch (Exception e){
+
+        }
     }
 }

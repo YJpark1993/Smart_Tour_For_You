@@ -52,9 +52,6 @@
 			<IMAGE id="logo" layout="214,143,280,70" defaultImg="res/ic_logo_white_large.png" visible="invisible" />
 			<LABEL id="textLabel" layout="0,440,720,250" text="{'She used Pinterest'+'\n'+'to roll her first pasta'}" fontSize="60" minFontSize="-1" textAlign="center" textColor="#ffffff" visible="invisible" />
 
-			<STYLEBUTTON id="googleBtn" layout="111,892,497,80" shape="roundRect(10)" defaultImg="#f6ff00" text="Continue with Google" fontSize="30" textAlign="center" textColor="#ffffff"
-				fontStyle="bold" onClick="" visible="invisible" />
-
 			<LABEL id="footLabel" layout="0,1133,720,50" text="Have an account? Log In" fontSize="30" minFontSize="-1" textAlign="center" textColor="#ffffff" visible="invisible" />
 		</WINDOW>
 	</UILAYOUT>

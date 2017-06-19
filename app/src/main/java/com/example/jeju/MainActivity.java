@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.kakao.auth.ErrorCode;
 import com.kakao.auth.ISessionCallback;
 import com.kakao.auth.Session;
 import com.kakao.network.ErrorResult;
@@ -38,10 +37,10 @@ public class MainActivity extends MOMLActivity {
         if (getActionBar() != null) {
             getActionBar().setDisplayHomeAsUpEnabled(true);
         }
-        Intent intent = new Intent(MainActivity.this, SuccessActivity.class);
-        startActivity(intent);
+
         callback = new SessionCallback();
         Session.getCurrentSession().addCallback(callback);
+        Session.getCurrentSession().checkAndImplicitOpen();
     }
 
     @Override
@@ -63,40 +62,7 @@ public class MainActivity extends MOMLActivity {
 
         @Override
         public void onSessionOpened() {
-            UserManagement.requestMe(new MeResponseCallback() {
-
-                @Override
-                public void onFailure(ErrorResult errorResult) {
-                    String message = "failed to get user info. msg=" + errorResult;
-                    Logger.d(message);
-
-                    ErrorCode result = ErrorCode.valueOf(errorResult.getErrorCode());
-                    if (result == ErrorCode.CLIENT_ERROR_CODE) {
-                        finish();
-                    } else {
-                        //redirectMainActivity();
-                    }
-                }
-
-                @Override
-                public void onSessionClosed(ErrorResult errorResult) {
-                }
-
-                @Override
-                public void onNotSignedUp() {
-                }
-
-                @Override
-                public void onSuccess(UserProfile userProfile) {
-                    //로그인에 성공하면 로그인한 사용자의 일련번호, 닉네임, 이미지url등을 리턴합니다.
-                    //사용자 ID는 보안상의 문제로 제공하지 않고 일련번호는 제공합니다.
-                    Log.e("UserProfile", userProfile.toString());
-//                    Intent intent = new Intent(MainActivity.this, SuccessActivity.class);
-//                    startActivity(intent);
-                    finish();
-                }
-            });
-
+            redirectSignupActivity();  // 세션 연결성공 시 redirectSignupActivity() 호출
         }
 
         @Override
@@ -104,6 +70,45 @@ public class MainActivity extends MOMLActivity {
             if(exception != null) {
                 Logger.e(exception);
             }
-        }
+            setContentView(R.layout.activity_main); // 세션 연결이 실패했을때
+        }                                            // 로그인화면을 다시 불러옴
+    }
+
+    protected void redirectSignupActivity() {       //세션 연결 성공 시 SignupActivity로 넘김
+        requestMe();
+        final Intent intent = new Intent(this, SuccessActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        startActivity(intent);
+        finish();
+    }
+
+
+
+    private void requestMe() {
+        UserManagement.requestMe(new MeResponseCallback() {
+            @Override
+            public void onFailure(ErrorResult errorResult) {
+                String message = "failed to get user info. msg=" + errorResult;
+                Logger.d(message);
+
+            }
+
+            @Override
+            public void onSessionClosed(ErrorResult errorResult) {
+            }
+
+            @Override
+            public void onSuccess(UserProfile userProfile) {
+                Log.e("UserProfile ", userProfile.toString());
+
+                Intent intent = new Intent(MainActivity.this, SuccessActivity.class);
+                startActivity(intent);
+                finish();
+            }
+
+            @Override
+            public void onNotSignedUp() {
+            }
+        });
     }
 }
