@@ -47,9 +47,9 @@ public class SuccessActivity extends MOMLFragmentActivity {
     private LocationManager locManager; // 위치 정보 프로바이더
     private LocationListener locationListener; // 위치 정보가 업데이트시 동작
     private Location location;
-    private WebView webView;
+    private WebView webView, webView2;
     private TextView latTV, longTV;
-    private Button logOut;
+    private Button logOut, memoBtn;
     private String globalurl;
     private Bitmap bm;
     private TextView profile_name;
@@ -66,12 +66,21 @@ public class SuccessActivity extends MOMLFragmentActivity {
         setProfile();
 
         logOut = (Button) findViewById(R.id.logout);
+//        memoBtn = (Button)findViewById(R.id.memo) ;
         logOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onClickLogout();
             }
         });
+//        memoBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                final Intent intent = new Intent(SuccessActivity.this, MemoActivity.class);
+//                intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+//                startActivity(intent);
+//            }
+//        });
 
         final TabHost host = (TabHost) findViewById(R.id.tabHost);
         host.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
@@ -97,14 +106,14 @@ public class SuccessActivity extends MOMLFragmentActivity {
 
         spec.setContent(R.id.tab1);
         //spec.setIndicator("", ResourcesCompat.getDrawable(getResources(), R.drawable.check, null));
-        spec.setIndicator("b");
+        spec.setIndicator("경로 추천");
         host.addTab(spec);
 
 
         //Tab 2
         spec = host.newTabSpec("Tab Two");
         spec.setContent(R.id.tab2);
-        spec.setIndicator("a");
+        spec.setIndicator("사용자 정보");
         //spec.setIndicator("", ResourcesCompat.getDrawable(getResources(), R.drawable.search, null));
         host.addTab(spec);
         latTV = (TextView)findViewById(R.id.lat);
@@ -129,6 +138,25 @@ public class SuccessActivity extends MOMLFragmentActivity {
                 longTV.setText("My GPS longitude : " + longitude);
             }
         });
+        webView2 = (WebView) findViewById(R.id.webview2);
+        //webview.setWebViewClinet(new WebViewClient());
+        webView2.getSettings().setJavaScriptEnabled(true);
+
+        webView2.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
+        webView2.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                view.loadUrl(url);
+                return true;
+            }
+
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                String urlString = webView.getUrl().toString();
+            }
+        });
+        webView2.loadUrl("https://react-memo.herokuapp.com/");
+
 
         locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
